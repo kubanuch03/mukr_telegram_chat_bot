@@ -58,33 +58,27 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 async def send_long_message(context: ContextTypes.DEFAULT_TYPE, chat_id: int, text: str):
     """Отправляет длинное сообщение, разбивая его на части."""
     if not text:
-        return # Не отправляем пустые сообщения
+        return
 
-    # Используем константу из библиотеки для лимита
-    max_length = MessageLimit.TEXT_LENGTH 
+    # --- ИЗМЕНЕНИЕ ЗДЕСЬ ---
+    # Используем правильное имя атрибута
+    max_length = MessageLimit.MAX_TEXT_LENGTH
+    # -----------------------
 
     start_index = 0
     while start_index < len(text):
-        # Определяем конец следующего чанка
         end_index = start_index + max_length
-        
-        # Берем срез текста
         chunk = text[start_index:end_index]
         
-        # Отправляем чанк
         try:
             await context.bot.send_message(chat_id=chat_id, text=chunk)
             logger.debug(f"Отправлен чанк длиной {len(chunk)} в чат {chat_id}")
         except Exception as e:
              logger.error(f"Не удалось отправить чанк в чат {chat_id}: {e}", exc_info=True)
-             # Можно добавить логику повторной отправки или уведомления пользователя
-             break # Прерываем отправку остальных частей при ошибке
+             break
 
-        # Обновляем начальный индекс для следующей итерации
         start_index = end_index
-        
-        # Небольшая пауза между сообщениями (опционально, помогает избежать rate limits при ОЧЕНЬ длинных ответах)
-        await asyncio.sleep(0.1) 
+        await asyncio.sleep(0.1)
 
 def main() -> None:
     """Запускает бота."""
