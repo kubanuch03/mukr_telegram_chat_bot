@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  tgbot:
+    build: 
+      context: .
+    container_name: tg_bot
+    env_file:
+      - .env
+    volumes:
+      - ./:/usr/src/app
+    restart: always
